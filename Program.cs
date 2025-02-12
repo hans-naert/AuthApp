@@ -42,15 +42,22 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Configure Identity
+// Configure Identity with Roles
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>() // Enable roles
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+// Add Authorization Policies
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+});
 
 // Add services to the container.
 builder.Services.AddRazorPages().AddRazorPagesOptions(options =>
     {
         options.Conventions.AuthorizePage("/SecurePage"); // Example of protecting a page
+        options.Conventions.AuthorizeFolder("/Admin", "Admin");
     });
 
 var app = builder.Build();
