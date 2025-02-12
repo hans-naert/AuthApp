@@ -14,7 +14,10 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 // Add services to the container.
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages().AddRazorPagesOptions(options =>
+    {
+        options.Conventions.AuthorizePage("/SecurePage"); // Example of protecting a page
+    });
 
 var app = builder.Build();
 
